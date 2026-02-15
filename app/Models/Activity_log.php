@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Activity_log extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'aktivitas',
+    ];
+
+    protected $table = 'activity_logs';
+
+    // Relasi ke User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+}
