@@ -25,10 +25,13 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // ✅ LOG LOGIN (PAKAI TABEL KAMU)
-            Activity_log::create([
-                'user_id' => $user->id,
-                'aktivitas' => 'Login sebagai ' . ucfirst($user->role),
-            ]);
+            // Guard logging so missing model/table doesn't break login
+            if (class_exists(\App\Models\Activity_log::class)) {
+                \App\Models\Activity_log::create([
+                    'user_id' => $user->id,
+                    'aktivitas' => 'Login sebagai ' . ucfirst($user->role),
+                ]);
+            }
 
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard')->with('success', 'Selamat Datang Di Dashboard Admin');
