@@ -48,7 +48,7 @@
                 @if (auth()->user()->role === 'admin')
                     {{-- Admin --}}
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -59,7 +59,7 @@
                     </li>
 
                     <li>
-                        <a href="/petugas" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
+                        <a href="{{ route('admin.petuga.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -70,7 +70,7 @@
                     </li>
 
                     <li>
-                        <a href="/kelas" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
+                        <a href="{{ route('admin.kela.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path
@@ -81,7 +81,7 @@
                     </li>
 
                     <li>
-                        <a href="/siswa" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
+                        <a href="{{ route('admin.siswa.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
                                 fill="currentColor">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />

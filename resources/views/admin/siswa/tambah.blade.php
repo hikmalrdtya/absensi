@@ -1,0 +1,55 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="p-6 bg-gray-50 min-h-screen">
+
+    <h1 class="text-2xl font-bold mb-6">Tambah Siswa</h1>
+
+    <div class="bg-white rounded-xl shadow p-6 max-w-xl">
+        <form action="{{ route('admin.siswa.store') }}" method="POST">
+            @csrf
+
+            <!-- NAMA -->
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Nama Siswa</label>
+                <input type="text" name="nama"
+                       class="w-full rounded-lg border px-4 py-2"
+                       value="{{ old('nama') }}" required>
+            </div>
+
+            <!-- KELAS -->
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Kelas</label>
+                <select name="kelas_id"
+                        class="w-full rounded-lg border px-4 py-2" required>
+                    <option value="">-- Pilih Kelas --</option>
+                    @foreach ($kelas as $k)
+                        <option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- NO HP -->
+            <div class="mb-6">
+                <label class="block mb-1 font-medium">No. HP Ortu</label>
+                <input type="text" name="no_hp_orang_tua"
+                       class="w-full rounded-lg border px-4 py-2"
+                       value="{{ old('no_hp_orang_tua') }}" required>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="flex gap-3">
+                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Simpan
+                </button>
+
+                <a href="{{ route('admin.siswa.index') }}"
+                   class="px-6 py-2 rounded-lg border hover:bg-gray-100">
+                    Kembali
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+@endsection

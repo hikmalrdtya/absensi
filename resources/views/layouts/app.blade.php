@@ -10,8 +10,8 @@
 </head>
 
 <body class="bg-white">
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex items-center h-20">
-        <div class="flex items-center gap-3 ml-4  h-20">
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 flex items-center justify-between h-20 px-4">
+        <div class="flex items-center gap-3 h-20">
             <button id="sidebarToggle"
                 class="w-10 h-10 bg-white/10 text-black rounded-lg flex items-center justify-center focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -20,9 +20,17 @@
                 </svg>
             </button>
 
-            <h2 class="text-xl font-semibold">Dashboard Petugas</h2>
+            <h2 class="text-xl font-semibold">
+                Dashboard
+                @if (Auth::user()->role === 'admin')
+                    Admin
+                @elseif (Auth::user()->role === 'petugas')
+                    Petugas
+                @endif
+            </h2>
         </div>
     </header>
+
 
     <nav>
         @include('layouts.sidebar')

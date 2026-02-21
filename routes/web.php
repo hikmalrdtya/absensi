@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\KelasController;
+use App\Http\Controllers\Admin\PetugasController;
+use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Petugas\AbsensiController;
@@ -31,6 +34,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 //prefix admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'masuk'])->name('dashboard');
+    Route::resource('petuga', PetugasController::class);
+    Route::resource('kela', KelasController::class);
+    Route::resource('siswa', SiswaController::class);
 });
 
 // prefix petugas
