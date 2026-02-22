@@ -21,7 +21,7 @@ class redirek
 
             if($user->role === 'admin'){
                 return redirect()->route('admin.dashboard');
-            } elseif($user->role === 'petugas'){
+            } elseif($user->role === 'petugas' || $user->role === 'wali_kelas'){
                 return redirect()->route('petugas.dashboard');
             } 
         }

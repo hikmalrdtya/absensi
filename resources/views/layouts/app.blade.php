@@ -20,7 +20,7 @@
                 </svg>
             </button>
 
-            <h2 class="text-xl font-semibold">Dashboard Petugas</h2>
+            <h2 class="text-xl font-semibold">Dashboard {{ ucfirst(auth()->user()->role) }}</h2>
         </div>
     </header>
 

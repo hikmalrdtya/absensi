@@ -16,4 +16,9 @@ class Kelas extends Model
     {
         return $this->hasMany(Siswa::class);
     }
+
+    public function wali()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'wali_id');
+    }
 }

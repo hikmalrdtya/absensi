@@ -31,7 +31,7 @@
                     <div class="w-10 h-10 bg-blue-800 rounded flex items-center justify-center font-bold">A</div>
                     <div>
                         <div class="font-semibold">Absensi Siswa</div>
-                        <div class="text-sm text-blue-200">Administrator</div>
+                        <div class="text-sm text-blue-200">{{ ucfirst(auth()->user()->role) }}</div>
                     </div>
                 </div>
                 <button id="sidebarCloseBtn" aria-label="Close sidebar" class="p-2 rounded-md hover:bg-blue-500/20">
@@ -48,7 +48,8 @@
                 @if (auth()->user()->role === 'admin')
                     {{-- Admin --}}
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -114,7 +115,8 @@
                 @elseif (auth()->user()->role === 'petugas')
                     {{-- Petugas --}}
                     <li>
-                        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
+                        <a href="{{ route('petugas.dashboard') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/80 {{ request()->routeIs('petugas.dashboard') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -126,7 +128,7 @@
 
                     <li>
                         <a href="{{ route('petugas.absensi.index') }}"
-                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
+                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60 {{ request()->routeIs('petugas.absensi.*') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
                                 fill="currentColor">
                                 <path
@@ -144,8 +146,8 @@
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-full bg-blue-800 flex items-center justify-center">A</div>
                     <div>
-                        <div class="font-medium">Administrator</div>
-                        <div class="text-sm text-blue-200">Admin</div>
+                        <div class="font-medium">{{ auth()->user()->name }}</div>
+                        <div class="text-sm text-blue-200">{{ ucfirst(auth()->user()->role ?? 'user') }}</div>
                     </div>
                 </div>
                 <div>
