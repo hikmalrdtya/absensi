@@ -15,11 +15,17 @@
         <form action="{{ route('petugas.absensi.store') }}" method="POST" class="space-y-4">
             @csrf
 
+            @if (isset($missing) && count($missing) > 0)
+                <div id="absensi-missing-toast" class="mb-4 rounded-lg bg-yellow-100 text-yellow-800 px-4 py-2 text-sm">
+                    Terdapat {{ count($missing) }} siswa yang belum diisi kehadirannya. Silakan lengkapi.
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 gap-4">
                 @foreach ($siswa as $s)
                     <div class="bg-white rounded-lg p-4 flex items-center justify-between">
                         <div>
-                            <div class="font-semibold">{{ $s->nama }} <span
+                            <div class="font-semibold">{{ ucfirst($s->nama) }} <span
                                     class="text-sm text-gray-500">({{ $s->kelas->nama_kelas ?? '-' }})</span></div>
                             <div class="text-sm text-gray-500">{{ $s->no_hp_orang_tua }}</div>
                         </div>
@@ -40,24 +46,20 @@
                                 <input type="radio" name="absensi[{{ $s->id }}]" value="Alpa"
                                     {{ $current === 'Alpa' ? 'checked' : '' }}>
                             </div>
-
-                            <div>
-                                <form action="{{ route('petugas.absensi.sendSms', $s->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Kirim
-                                        SMS</button>
-                                </form>
-                            </div>
                         </div>
                     </div>
                 @endforeach
             </div>
 
             <div class="mt-4">
-                <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded">Simpan
-                    Absensi</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded"
+                    @if (isset($disableSave) && $disableSave) disabled aria-disabled="true" style="opacity:0.6;cursor:not-allowed;" @endif>
+                    Simpan Absensi
+                </button>
+            </div>
+
+            <div class="mt-4">
+                {{ $siswa->links('vendor.pagination.custom') }}
             </div>
         </form>
     </div>

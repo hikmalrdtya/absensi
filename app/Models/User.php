@@ -28,12 +28,18 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'kelas_id',
     ];
 
 
     public function activity_logs()
     {
         return $this->hasMany(Activity_log::class, 'user_id');
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     /**

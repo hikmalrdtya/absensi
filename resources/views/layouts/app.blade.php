@@ -19,15 +19,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-
-            <h2 class="text-xl font-semibold">
-                Dashboard
-                @if (Auth::user()->role === 'admin')
-                    Admin
-                @elseif (Auth::user()->role === 'petugas')
-                    Petugas
-                @endif
-            </h2>
+            <h2 class="text-xl font-semibold">Dashboard {{ ucfirst(auth()->user()->role) }}</h2>
         </div>
     </header>
 

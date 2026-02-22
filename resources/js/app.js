@@ -68,3 +68,64 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Handle send SMS / WA buttons on absensi page (non-blocking, AJAX)
+document.addEventListener("DOMContentLoaded", function () {
+    function postTo(url, data) {
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            body: data,
+            credentials: "same-origin",
+        });
+    }
+
+    function getCsrfToken() {
+        var tokenInput = document.querySelector('form input[name="_token"]');
+        return tokenInput ? tokenInput.value : null;
+    }
+
+    document.querySelectorAll(".send-sms").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            var id = this.getAttribute("data-id");
+            var token = getCsrfToken();
+            if (!token) return alert("CSRF token not found");
+
+            var formData = new FormData();
+            formData.append("_token", token);
+
+            btn.disabled = true;
+            postTo("/petugas/absensi/" + id + "/send-sms", formData)
+                .then(function () {
+                    window.location.reload();
+                })
+                .catch(function () {
+                    alert("Gagal mengirim SMS");
+                    btn.disabled = false;
+                });
+        });
+    });
+
+    document.querySelectorAll(".send-wa").forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            var id = this.getAttribute("data-id");
+            var token = getCsrfToken();
+            if (!token) return alert("CSRF token not found");
+
+            var formData = new FormData();
+            formData.append("_token", token);
+
+            btn.disabled = true;
+            postTo("/petugas/absensi/" + id + "/send-wa", formData)
+                .then(function () {
+                    window.location.reload();
+                })
+                .catch(function () {
+                    alert("Gagal mengirim WhatsApp");
+                    btn.disabled = false;
+                });
+        });
+    });
+});
