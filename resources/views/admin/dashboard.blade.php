@@ -13,7 +13,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
                 <div>
                     <p class="text-gray-500">Total Siswa</p>
-                    <h2 class="text-3xl font-bold mt-2">10</h2>
+                    <h2 class="text-3xl font-bold mt-2">{{ $siswa }}</h2>
                 </div>
                 <div class="bg-blue-100 p-4 rounded-lg">
                     <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
@@ -29,7 +29,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
                 <div>
                     <p class="text-gray-500">Total Kelas</p>
-                    <h2 class="text-3xl font-bold mt-2">5</h2>
+                    <h2 class="text-3xl font-bold mt-2">{{ $kelas }}</h2>
                 </div>
                 <div class="bg-green-100 p-4 rounded-lg">
                     <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
@@ -44,7 +44,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6 flex items-center justify-between">
                 <div>
                     <p class="text-gray-500">Total Petugas</p>
-                    <h2 class="text-3xl font-bold mt-2">2</h2>
+                    <h2 class="text-3xl font-bold mt-2">{{ $petugas }}</h2>
                 </div>
                 <div class="bg-yellow-100 p-4 rounded-lg">
                     <svg class="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2"
