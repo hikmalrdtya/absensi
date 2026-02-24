@@ -20,18 +20,6 @@
                     <small class="text-red-500">{{ $message }}</small>
                 @enderror
             </div>
-
-            <!-- JURUSAN -->
-            <div class="mb-4">
-                <label class="block text-gray-600 mb-2">Jurusan</label>
-                <input type="text" name="jurusan"
-                    value="{{ old('jurusan', $kela->jurusan) }}"
-                    class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500" required>
-                @error('jurusan')
-                    <small class="text-red-500">{{ $message }}</small>
-                @enderror
-            </div>
-
             <!-- WALI KELAS -->
             <div class="mb-6">
                 <label class="block text-gray-600 mb-2">Wali Kelas</label>
