@@ -46,12 +46,12 @@
         <nav class="flex-1 px-4 py-6">
             <ul class="space-y-3">
                 @if (auth()->user()->role === 'admin')
-                    {{-- Admin --}}
+                    {{-- ================= ADMIN ================= --}}
                     <li>
-                        <a href="{{ route('admin.dashboard') }}"
-                            class="flex items-center gap-3 px-3 py-2 rounded-md bg-blue-700/80">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{{ route('admin.dashboard') }}"class="flex items-center gap-3 px-3 py-2 rounded-md
+                            {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
                             </svg>
@@ -60,9 +60,11 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('admin.petuga.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{{ route('admin.petuga.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->routeIs('admin.petuga.*') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M5.121 17.804A12.055 12.055 0 0112 15c2.5 0 4.847.7 6.879 1.904M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
@@ -71,8 +73,10 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('admin.kela.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 20 20"
+                        <a href="{{ route('admin.kela.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->routeIs('admin.kela.*') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                 fill="currentColor">
                                 <path
                                     d="M10 2a1 1 0 00-.894.553L7.382 6H4a1 1 0 000 2h2v6a2 2 0 002 2h4a2 2 0 002-2V8h2a1 1 0 100-2h-3.382l-1.724-3.447A1 1 0 0010 2z" />
@@ -82,8 +86,10 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('admin.siswa.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
+                        <a href="{{ route('admin.siswa.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->routeIs('admin.siswa.*') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
                                 fill="currentColor">
                                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
                                 <path d="M6 20a6 6 0 0112 0H6z" />
@@ -93,19 +99,10 @@
                     </li>
 
                     <li>
-                        <a href="" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
-                                fill="currentColor">
-                                <path
-                                    d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM7 10h10v2H7v-2z" />
-                            </svg>
-                            <span>Data Absensi</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/sms" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
+                        <a href="/sms"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->is('sms*') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
                                 fill="currentColor">
                                 <path d="M2 7a2 2 0 012-2h16a2 2 0 012 2v9a2 2 0 01-2 2H6l-4 4V7z" />
                             </svg>
@@ -113,12 +110,14 @@
                         </a>
                     </li>
                 @elseif (auth()->user()->role === 'petugas')
-                    {{-- Petugas --}}
+                    {{-- ================= PETUGAS ================= --}}
+
                     <li>
                         <a href="{{ route('petugas.dashboard') }}"
-                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/80 {{ request()->routeIs('petugas.dashboard') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->routeIs('petugas.dashboard') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
                             </svg>
@@ -128,8 +127,9 @@
 
                     <li>
                         <a href="{{ route('petugas.absensi.index') }}"
-                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60 {{ request()->routeIs('petugas.absensi.*') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-100" viewBox="0 0 24 24"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md
+                   {{ request()->routeIs('petugas.absensi.*') ? 'bg-blue-700/80 text-white' : 'hover:bg-blue-700/60 text-blue-100' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
                                 fill="currentColor">
                                 <path
                                     d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM7 10h10v2H7v-2z" />
