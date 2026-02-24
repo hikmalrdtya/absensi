@@ -76,7 +76,7 @@ Route::prefix('admin')
         Route::get('dashboard', [DashboardController::class, 'masuk'])
             ->name('dashboard');
 
-        Route::resource('petugas', PetugasController::class);
-        Route::resource('kelas', KelasController::class);
+        Route::resource('petuga', PetugasController::class);
+        Route::resource('kela', KelasController::class);
         Route::resource('siswa', SiswaController::class);
     });

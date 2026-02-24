@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -13,7 +14,7 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $kelas = Kelas::all();
+        $kelas = Kelas::with('waliKelas')->get();
         return view('admin.kela.index', compact('kelas'));
     }
 
@@ -22,7 +23,8 @@ class KelasController extends Controller
      */
     public function create()
     {
-        return view('admin.kela.tambah');
+        $petugas = User::where('role', 'petugas')->get();
+        return view('admin.kela.tambah', compact('petugas'));
     }
 
     /**
@@ -31,22 +33,20 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kelas' => 'required|string|max:255',
+            'nama_kelas'     => 'required|string|max:255',
+            'jurusan'        => 'required|string|max:255',
+            'wali_kelas_id'  => 'nullable|exists:users,id',
         ]);
 
         Kelas::create([
-            'nama_kelas' => $request->nama_kelas,
+            'nama_kelas'    => $request->nama_kelas,
+            'jurusan'       => $request->jurusan,
+            'wali_kelas_id' => $request->wali_kelas_id,
         ]);
 
-        return redirect()->route('admin.kela.index')->with('success', 'Kelas berhasil ditambahkan.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return redirect()
+            ->route('admin.kela.index')
+            ->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     /**
@@ -54,10 +54,8 @@ class KelasController extends Controller
      */
     public function edit(Kelas $kela)
     {
-        if (!$kela) {
-            abort(404);
-        }
-        return view('admin.kela.edit', compact('kela'));
+        $petugas = User::where('role', 'petugas')->get();
+        return view('admin.kela.edit', compact('kela', 'petugas'));
     }
 
     /**
@@ -65,16 +63,16 @@ class KelasController extends Controller
      */
     public function update(Request $request, Kelas $kela)
     {
-        if (!$kela) {
-            abort(404);
-        }
-
         $request->validate([
-            'nama_kelas' => 'required|string|max:255',
+            'nama_kelas'     => 'required|string|max:255',
+            'jurusan'        => 'required|string|max:255',
+            'wali_kelas_id'  => 'nullable|exists:users,id',
         ]);
 
         $kela->update([
-            'nama_kelas' => $request->nama_kelas,
+            'nama_kelas'    => $request->nama_kelas,
+            'jurusan'       => $request->jurusan,
+            'wali_kelas_id' => $request->wali_kelas_id,
         ]);
 
         return redirect()
@@ -82,16 +80,11 @@ class KelasController extends Controller
             ->with('success', 'Kelas berhasil diperbarui.');
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Kelas $kela)
     {
-        if (!$kela) {
-            abort(404);
-        }
-
         $kela->delete();
 
         return redirect()

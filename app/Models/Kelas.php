@@ -8,9 +8,14 @@ class Kelas extends Model
 {
     protected $fillable = [
         'nama_kelas',
+        'wali_kelas_id',
     ];
 
 
+    public function waliKelas()
+    {
+        return $this->belongsTo(User::class, 'wali_kelas_id');
+    }
 
     public function siswa()
     {
