@@ -15,11 +15,7 @@
         <!-- ICON -->
         <div class="flex justify-center mb-6">
             <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 21h18M4 21V7a1 1 0 011-1h3m10 15V7a1 1 0 00-1-1h-3m-4 15V3m0 0L8 5m4-2l4 2" />
-                </svg>
+               <svg xmlns="http://www.w3.org/2000/svg" height="35px" viewBox="0 -960 960 960" width="35px" fill="#e3e3e3"><path d="M480-120 200-272v-240L40-600l440-240 440 240v320h-80v-276l-80 44v240L480-120Zm0-332 274-148-274-148-274 148 274 148Zm0 241 200-108v-151L480-360 280-470v151l200 108Zm0-241Zm0 90Zm0 0Z"/></svg>
             </div>
         </div>
 

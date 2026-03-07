@@ -14,7 +14,7 @@ class PetugasController extends Controller
      */
     public function index()
     {
-        $petuga = User::where('role', 'petugas')->get();
+        $petuga = User::where('role', 'petugas')->paginate(10);
         return view('admin.petuga.index', compact('petuga'));
     }
 

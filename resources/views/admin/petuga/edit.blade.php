@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="p-6 bg-gray-50 min-h-screen grid place-items-center">
 
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Petugas</h1>
 
-    <div class="bg-white rounded-xl shadow p-6 max-w-xl">
+    <div class="bg-white rounded-xl shadow p-6 w-4xl">
         <form action="{{ route('admin.petuga.update', $petuga) }}" method="POST">
             @csrf
             @method('PUT')

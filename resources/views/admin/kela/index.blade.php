@@ -1,97 +1,109 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 bg-gray-50 min-h-screen">
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Data Kelas</h1>
-        <a href="{{ route('admin.kela.create') }}"
-            class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
-            + Tambah Kelas
-        </a>
-    </div>
-
-    {{-- NOTIFIKASI --}}
-    @if (session('success'))
-        <div class="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
-            {{ session('success') }}
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Data Kelas</h1>
+            <a href="{{ route('admin.kela.create') }}"
+                class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+                + Tambah Kelas
+            </a>
         </div>
-    @endif
 
-    @if (session('error'))
-        <div class="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
-            {{ session('error') }}
-        </div>
-    @endif
+        {{-- NOTIFIKASI --}}
+        @if (session('success'))
+            <div class="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
 
-    <!-- TABLE -->
-    <div class="bg-white rounded-xl shadow overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-100 text-gray-600">
-                <tr>
-                    <th class="px-6 py-4 text-left">No</th>
-                    <th class="px-6 py-4 text-left">Nama Kelas</th>
-                    <th class="px-6 py-4 text-left">Jurusan</th>
-                    <th class="px-6 py-4 text-left">Wali Kelas</th>
-                    <th class="px-6 py-4 text-center">Aksi</th>
-                </tr>
-            </thead>
+        @if (session('error'))
+            <div class="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
 
-            <tbody class="divide-y">
-                @forelse ($kelas as $k)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
-
-                        <td class="px-6 py-4 font-semibold">
-                            {{ $k->nama_kelas }}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            {{ $k->jurusan }}
-                        </td>
-
-                        {{-- WALI KELAS (USER PETUGAS) --}}
-                        <td class="px-6 py-4">
-                            @if ($k->waliKelas)
-                                <span class="font-medium text-gray-800">
-                                    {{ $k->waliKelas->name }}
-                                </span>
-                            @else
-                                <span class="text-gray-400 italic">
-                                    Belum ditentukan
-                                </span>
-                            @endif
-                        </td>
-
-                        {{-- AKSI --}}
-                        <td class="px-6 py-4 text-center space-x-2">
-                            <a href="{{ route('admin.kela.edit', $k->id) }}"
-                                class="bg-yellow-400 text-white px-3 py-1 rounded-lg hover:bg-yellow-500">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('admin.kela.destroy', $k->id) }}"
-                                method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button onclick="return confirm('Hapus kelas ini?')"
-                                    class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600">
-                                    Hapus
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
+        <!-- TABLE -->
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100 text-gray-600">
                     <tr>
-                        <td colspan="5" class="px-6 py-6 text-center text-gray-400">
-                            Data kelas belum tersedia
-                        </td>
+                        <th class="px-6 py-4 text-left">No</th>
+                        <th class="px-6 py-4 text-left">Nama Kelas</th>
+                        <th class="px-6 py-4 text-left">Wali Kelas</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                </thead>
 
-</div>
+                <tbody class="divide-y">
+                    @forelse ($kelas as $k)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ $loop->iteration }}</td>
+
+                            <td class="px-6 py-4 font-semibold">
+                                {{ $k->nama_kelas }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                @if ($k->wali_id)
+                                    <span class="font-medium text-gray-800">
+                                        {{ $k->waliKelas->name }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400 italic">
+                                        Belum ditentukan
+                                    </span>
+                                @endif
+                            </td>
+
+                            {{-- AKSI --}}
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center gap-3">
+
+                                    <a href="{{ route('admin.kela.edit', $k->id) }}"
+                                        class="p-2 rounded-lg hover:bg-yellow-100 transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                            width="24px" fill="#f5d902">
+                                            <path
+                                                d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+                                        </svg>
+                                    </a>
+
+                                    <form action="{{ route('admin.kela.destroy', $k->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button onclick="return confirm('Hapus petugas ini?')"
+                                            class="p-2 rounded-lg hover:bg-red-100 transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                                width="24px" fill="#f50202">
+                                                <path
+                                                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                                            </svg>
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-6 text-center text-gray-400">
+                                Data kelas belum tersedia
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+
+        <div>
+            {{ $kelas->links('vendor.pagination.custom') }}
+        </div>
+
+    </div>
 @endsection

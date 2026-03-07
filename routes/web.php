@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Petugas\AbsensiController;
+use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,10 @@ Route::prefix('petugas')
             [AbsensiController::class, 'sendSms']
         )->name('absensi.sendSms');
 
+        // Single-student edit form (select one siswa to edit today's attendance)
+        Route::get('absensi/edit-single', [AbsensiController::class, 'editSingle'])->name('absensi.editSingle');
+        Route::post('absensi/update-single', [AbsensiController::class, 'updateSingle'])->name('absensi.updateSingle');
+
         Route::resource('absensi', AbsensiController::class);
     });
 
@@ -79,4 +84,6 @@ Route::prefix('admin')
         Route::resource('petuga', PetugasController::class);
         Route::resource('kela', KelasController::class);
         Route::resource('siswa', SiswaController::class);
+        Route::resource('absensi', AdminAbsensiController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
+        Route::get('siswa/{siswa}/absensi', [SiswaController::class, 'showAbsensi'])->name('siswa.absensi');
     });

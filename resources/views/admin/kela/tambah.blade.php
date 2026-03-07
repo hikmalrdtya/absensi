@@ -1,76 +1,64 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="p-6 bg-gray-50 grid place-items-center">
 
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Tambah Kelas</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">Tambah Kelas</h1>
 
-    <div class="bg-white rounded-xl shadow p-6 max-w-xl">
-        <form action="{{ route('admin.kela.store') }}" method="POST">
-            @csrf
+        <div class="bg-white rounded-xl shadow p-6 w-4xl">
+            <form action="{{ route('admin.kela.store') }}" method="POST">
+                @csrf
 
-            <!-- NAMA KELAS -->
-            <div class="mb-4">
-                <label class="block text-gray-600 mb-2">Nama Kelas</label>
-                <input type="text" name="nama_kelas"
-                    value="{{ old('nama_kelas') }}"
-                    class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500"
-                    placeholder="Contoh: X-A" required>
+                <!-- NAMA KELAS -->
+                <div class="mb-4">
+                    <label class="block text-gray-600 mb-2">Nama Kelas</label>
+                    <input type="text" name="nama_kelas" value="{{ old('nama_kelas') }}"
+                        class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                        placeholder="Contoh: X-A" required>
 
-                @error('nama_kelas')
-                    <small class="text-red-500">{{ $message }}</small>
-                @enderror
-            </div>
+                    @error('nama_kelas')
+                        <small class="text-red-500">{{ $message }}</small>
+                    @enderror
+                </div>
 
-            <!-- JURUSAN -->
-            <div class="mb-4">
-                <label class="block text-gray-600 mb-2">Jurusan</label>
-                <input type="text" name="jurusan"
-                    value="{{ old('jurusan') }}"
-                    class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500"
-                    placeholder="Contoh: PPLG" required>
+                <!-- WALI KELAS (USER PETUGAS) -->
+                <div class="mb-6">
+                    <label class="block text-gray-600 mb-2">Wali Kelas</label>
+                    <select name="wali_kelas_id"
+                        class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500">
 
-                @error('jurusan')
-                    <small class="text-red-500">{{ $message }}</small>
-                @enderror
-            </div>
+                        <option value="">-- Pilih Wali Kelas --</option>
 
-            <!-- WALI KELAS (USER PETUGAS) -->
-            <div class="mb-6">
-                <label class="block text-gray-600 mb-2">Wali Kelas</label>
-                <select name="wali_kelas_id"
-                    class="w-full rounded-lg border px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                        @foreach ($petugas as $p)
+                            @php $isAssigned = isset($assigned) && in_array($p->id, $assigned); @endphp
+                            <option value="{{ $p->id }}" {{ $isAssigned ? 'disabled' : '' }}
+                                {{ old('wali_kelas_id') == $p->id ? 'selected' : '' }}
+                                {{ $isAssigned ? 'title=\"Sudah ditugaskan sebagai wali kelas\"' : '' }}>
+                                {{ $p->name }} {{ $isAssigned ? ' (sudah menjadi wali kelas)' : '' }}
+                            </option>
+                        @endforeach
 
-                    <option value="">-- Pilih Wali Kelas --</option>
+                    </select>
 
-                    @foreach ($petugas as $p)
-                        <option value="{{ $p->id }}"
-                            {{ old('wali_kelas_id') == $p->id ? 'selected' : '' }}>
-                            {{ $p->name }}
-                        </option>
-                    @endforeach
+                    @error('wali_kelas_id')
+                        <small class="text-red-500">{{ $message }}</small>
+                    @enderror
+                </div>
 
-                </select>
+                <!-- BUTTON -->
+                <div class="flex gap-3">
+                    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                        Simpan
+                    </button>
 
-                @error('wali_kelas_id')
-                    <small class="text-red-500">{{ $message }}</small>
-                @enderror
-            </div>
+                    <a href="{{ route('admin.kela.index') }}"
+                        class="bg-gray-400 text-white px-6 py-2 rounded-lg hover:bg-gray-500">
+                        Batal
+                    </a>
+                </div>
 
-            <!-- BUTTON -->
-            <div class="flex gap-3">
-                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                    Simpan
-                </button>
+            </form>
+        </div>
 
-                <a href="{{ route('admin.kela.index') }}"
-                    class="bg-gray-400 text-white px-6 py-2 rounded-lg hover:bg-gray-500">
-                    Batal
-                </a>
-            </div>
-
-        </form>
     </div>
-
-</div>
 @endsection

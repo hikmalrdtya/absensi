@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
+<div class="p-6 bg-gray-50 grid place-items-center">
 
     <h1 class="text-2xl font-bold mb-6">Tambah Siswa</h1>
 
-    <div class="bg-white rounded-xl shadow p-6 max-w-xl">
+    <div class="bg-white rounded-xl shadow p-6 w-4xl">
         <form action="{{ route('admin.siswa.store') }}" method="POST">
             @csrf
 

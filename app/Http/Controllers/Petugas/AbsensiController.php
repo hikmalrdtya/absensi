@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Petugas;
 use App\Http\Controllers\Controller;
 use App\Models\Absensi;
 use App\Models\Siswa;
+use App\Models\Kelas;
 use App\Services\SmsService;
 use App\Models\SmsLog;
 use Carbon\Carbon;
@@ -21,45 +22,50 @@ class AbsensiController extends Controller
         $user = auth()->user();
         $today = now()->toDateString();
 
-        // only allow wali_kelas to view their own class; fall back to petugas behaviour
-        if ($user->role === 'wali_kelas' && $user->kelas_id) {
-            $kelasId = $user->kelas_id;
-            $siswa = Siswa::with('kelas')->where('kelas_id', $kelasId)->orderBy('nama')->paginate(10);
+        // Ambil kelas yang diwalikan user
+        $kelas = Kelas::where('wali_id', $user->id)->first();
 
-            $classStudentIds = Siswa::where('kelas_id', $kelasId)->pluck('id');
-            $totalStudents = $classStudentIds->count();
-            $filledCount = Absensi::where('tanggal', $today)->whereIn('siswa_id', $classStudentIds)->count();
-
-            $disableSave = $filledCount >= $totalStudents && $totalStudents > 0;
-
-            $attendances = Absensi::where('tanggal', $today)
-                ->whereIn('siswa_id', $classStudentIds)
-                ->get()->keyBy('siswa_id')->map(function ($a) {
-                    return $a->status;
-                })->toArray();
-
-            $missing = Siswa::where('kelas_id', $kelasId)
-                ->whereNotIn('id', Absensi::where('tanggal', $today)->pluck('siswa_id'))
-                ->get();
-
-            return view('petugas.absensi', compact('siswa', 'attendances', 'disableSave', 'missing'));
+        // Kalau user tidak punya kelas
+        if (!$kelas) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki kelas yang diwalikan.');
         }
 
-        // default behaviour for non-wali: show all (paginated)
-        $siswa = Siswa::with('kelas')->orderBy('nama')->paginate(10);
+        $kelasId = $kelas->id;
 
-        $displayedIds = $siswa->pluck('id')->toArray();
+        // Ambil siswa kelas tersebut saja
+        $siswa = Siswa::with('kelas')
+            ->where('kelas_id', $kelasId)
+            ->orderBy('nama')
+            ->paginate(10);
 
+        // Ambil semua siswa id di kelas itu
+        $allStudentIds = Siswa::where('kelas_id', $kelasId)->pluck('id');
+
+        // Ambil absensi hari ini untuk kelas itu
         $attendances = Absensi::where('tanggal', $today)
-            ->whereIn('siswa_id', $displayedIds)
-            ->get()->keyBy('siswa_id')->map(function ($a) {
+            ->whereIn('siswa_id', $allStudentIds)
+            ->get()
+            ->keyBy('siswa_id')
+            ->map(function ($a) {
                 return $a->status;
-            })->toArray();
+            })
+            ->toArray();
 
-        $filledCount = Absensi::where('tanggal', $today)->whereIn('siswa_id', $displayedIds)->count();
-        $disableSave = $filledCount >= count($displayedIds) && count($displayedIds) > 0;
+        // Hitung apakah semua sudah diisi
+        $totalStudents = $allStudentIds->count();
+        $filledCount = Absensi::where('tanggal', $today)
+            ->whereIn('siswa_id', $allStudentIds)
+            ->count();
 
-        return view('petugas.absensi', compact('siswa', 'attendances', 'disableSave'));
+        $disableSave = $filledCount >= $totalStudents && $totalStudents > 0;
+
+        return view('petugas.absensi', compact(
+            'siswa',
+            'attendances',
+            'disableSave',
+            'kelasId',
+            'kelas'
+        ));
     }
 
     /**
@@ -104,6 +110,39 @@ class AbsensiController extends Controller
                 ['siswa_id' => $siswa_id, 'tanggal' => $today],
                 ['status' => $status, 'petugas_id' => auth()->id()]
             );
+            // send SMS notification for absent students (ALPA)
+            try {
+                if (strtoupper($status) === 'ALPA' && !empty($siswa->no_hp_orang_tua)) {
+                    $tanggal = Carbon::parse(now())->locale('id')->isoFormat('D MMMM YYYY');
+
+                    $pesan = "📢 NOTIFIKASI ABSENSI SISWA\n\n";
+                    $pesan .= "Yth. Orang tua / wali dari:\n";
+                    $pesan .= "Nama   : {$siswa->nama}\n";
+                    $pesan .= "Kelas  : " . ($siswa->kelas->nama_kelas ?? '-') . "\n\n";
+                    $pesan .= "Kami informasikan bahwa siswa tersebut tidak hadir pada:\n\n";
+                    $pesan .= "Tanggal : {$tanggal}\n";
+                    $pesan .= "Status  : " . strtoupper($status) . "\n\n";
+                    $pesan .= "Mohon perhatian dan konfirmasinya.\n\n";
+                    $pesan .= "Terima kasih.\n" . env('APP_SCHOOL_NAME', 'Sekolah');
+
+                    $smsResult = SmsService::send($siswa->no_hp_orang_tua, $pesan, ['siswa_id' => $siswa->id]);
+
+                    $ok = true;
+                    if (is_object($smsResult)) {
+                        $ok = (property_exists($smsResult, 'sid') && !empty($smsResult->sid));
+                    } elseif (is_array($smsResult)) {
+                        $ok = array_key_exists('success', $smsResult) ? (bool)$smsResult['success'] : true;
+                    } else {
+                        $ok = false;
+                    }
+
+                    if (! $ok) {
+                        Log::warning('Absensi store: failed to send SMS', ['siswa_id' => $siswa->id, 'result' => $smsResult]);
+                    }
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Absensi store: exception while sending SMS', ['error' => $e->getMessage(), 'siswa_id' => $siswa->id]);
+            }
         }
 
         // after saving, check for missing students in class and notify
@@ -151,6 +190,91 @@ class AbsensiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Show form to edit attendance for a single selected siswa.
+     */
+    public function editSingle(Request $request)
+    {
+        $user = auth()->user();
+        $kelas = Kelas::where('wali_id', $user->id)->first();
+
+        if (! $kelas) {
+            return back()->with('error', 'Anda tidak memiliki kelas yang diwalikan.');
+        }
+
+        $siswaList = Siswa::where('kelas_id', $kelas->id)->orderBy('nama')->get();
+
+        $siswaId = $request->query('siswa_id');
+        $currentStatus = null;
+        $selectedSiswa = null;
+
+        if ($siswaId) {
+            $selectedSiswa = Siswa::find($siswaId);
+            $attendance = Absensi::where('siswa_id', $siswaId)->where('tanggal', now()->toDateString())->first();
+            $currentStatus = $attendance->status ?? null;
+        }
+
+        return view('petugas.edit', compact('siswaList', 'selectedSiswa', 'currentStatus', 'kelas'));
+    }
+
+    /**
+     * Update attendance for a single siswa (today).
+     */
+    public function updateSingle(Request $request)
+    {
+        $data = $request->validate([
+            'siswa_id' => 'required|exists:siswa,id',
+            'status' => 'required|string',
+        ]);
+
+        $siswa = Siswa::find($data['siswa_id']);
+        if (! $siswa) {
+            return back()->with('error', 'Siswa tidak ditemukan.');
+        }
+
+        $today = now()->toDateString();
+
+        $absensi = Absensi::updateOrCreate(
+            ['siswa_id' => $siswa->id, 'tanggal' => $today],
+            ['status' => $data['status'], 'petugas_id' => auth()->id()]
+        );
+
+        // send SMS if ALPA (reuse same logic as store)
+        try {
+            if (strtoupper($data['status']) === 'ALPA' && !empty($siswa->no_hp_orang_tua)) {
+                $tanggal = Carbon::parse(now())->locale('id')->isoFormat('D MMMM YYYY');
+
+                $pesan = "📢 NOTIFIKASI ABSENSI SISWA\n\n";
+                $pesan .= "Yth. Orang tua / wali dari:\n";
+                $pesan .= "Nama   : {$siswa->nama}\n";
+                $pesan .= "Kelas  : " . ($siswa->kelas->nama_kelas ?? '-') . "\n\n";
+                $pesan .= "Kami informasikan bahwa siswa tersebut tidak hadir pada:\n\n";
+                $pesan .= "Tanggal : {$tanggal}\n";
+                $pesan .= "Status  : " . strtoupper($data['status']) . "\n\n";
+                $pesan .= "Mohon perhatian dan konfirmasinya.\n\n";
+                $pesan .= "Terima kasih.\n" . env('APP_SCHOOL_NAME', 'Sekolah');
+
+                $smsResult = SmsService::send($siswa->no_hp_orang_tua, $pesan, ['siswa_id' => $siswa->id]);
+
+                $ok = true;
+                if (is_object($smsResult)) {
+                    $ok = (property_exists($smsResult, 'sid') && !empty($smsResult->sid));
+                } elseif (is_array($smsResult)) {
+                    $ok = array_key_exists('success', $smsResult) ? (bool)$smsResult['success'] : true;
+                } else {
+                    $ok = false;
+                }
+
+                if (! $ok) {
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Absensi updateSingle: exception while sending SMS', ['error' => $e->getMessage(), 'siswa_id' => $siswa->id]);
+        }
+
+        return redirect()->route('petugas.absensi.editSingle', ['siswa_id' => $siswa->id])->with('success', 'Absensi siswa berhasil diperbarui.');
     }
 
     // removed duplicate sendWhatsApp() to avoid confusion

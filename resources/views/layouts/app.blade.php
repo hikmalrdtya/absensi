@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <link rel="shortcut icon" href="{{ asset('icon.png') }}" type="image/x-icon">
     @vite('resources/css/app.css')
     <title>Absensi Siswa</title>
 </head>
@@ -19,7 +22,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <h2 class="text-xl font-semibold">Dashboard {{ ucfirst(auth()->user()->role) }}</h2>
+            <h2 class="text-xl font-semibold">{{ ucfirst(auth()->user()->role) }} Panel</h2>
         </div>
     </header>
 
@@ -31,6 +34,8 @@
     <main class="content mt-20">
         @yield('content')
     </main>
+
+    @stack('scripts')
 
     @vite('resources/js/app.js')
 </body>

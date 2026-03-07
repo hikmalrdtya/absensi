@@ -14,7 +14,7 @@ class KelasController extends Controller
      */
     public function index()
     {
-        $kelas = Kelas::with('waliKelas')->get();
+        $kelas = Kelas::with('waliKelas')->paginate(10);
         return view('admin.kela.index', compact('kelas'));
     }
 
@@ -24,7 +24,8 @@ class KelasController extends Controller
     public function create()
     {
         $petugas = User::where('role', 'petugas')->get();
-        return view('admin.kela.tambah', compact('petugas'));
+        $assigned = Kelas::whereNotNull('wali_id')->pluck('wali_id')->toArray();
+        return view('admin.kela.tambah', compact('petugas', 'assigned'));
     }
 
     /**
@@ -41,7 +42,7 @@ class KelasController extends Controller
         Kelas::create([
             'nama_kelas'    => $request->nama_kelas,
             'jurusan'       => $request->jurusan,
-            'wali_kelas_id' => $request->wali_kelas_id,
+            'wali_id' => $request->wali_kelas_id,
         ]);
 
         return redirect()
@@ -55,7 +56,13 @@ class KelasController extends Controller
     public function edit(Kelas $kela)
     {
         $petugas = User::where('role', 'petugas')->get();
-        return view('admin.kela.edit', compact('kela', 'petugas'));
+        // Exclude current kelas's wali from assigned list so they remain selectable
+        $assigned = Kelas::whereNotNull('wali_id')
+            ->where('id', '!=', $kela->id)
+            ->pluck('wali_id')
+            ->toArray();
+
+        return view('admin.kela.edit', compact('kela', 'petugas', 'assigned'));
     }
 
     /**
@@ -72,7 +79,7 @@ class KelasController extends Controller
         $kela->update([
             'nama_kelas'    => $request->nama_kelas,
             'jurusan'       => $request->jurusan,
-            'wali_kelas_id' => $request->wali_kelas_id,
+            'wali_id' => $request->wali_kelas_id,
         ]);
 
         return redirect()
