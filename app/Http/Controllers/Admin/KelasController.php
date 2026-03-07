@@ -35,13 +35,11 @@ class KelasController extends Controller
     {
         $request->validate([
             'nama_kelas'     => 'required|string|max:255',
-            'jurusan'        => 'required|string|max:255',
             'wali_kelas_id'  => 'nullable|exists:users,id',
         ]);
 
         Kelas::create([
             'nama_kelas'    => $request->nama_kelas,
-            'jurusan'       => $request->jurusan,
             'wali_id' => $request->wali_kelas_id,
         ]);
 
@@ -72,13 +70,11 @@ class KelasController extends Controller
     {
         $request->validate([
             'nama_kelas'     => 'required|string|max:255',
-            'jurusan'        => 'required|string|max:255',
             'wali_kelas_id'  => 'nullable|exists:users,id',
         ]);
 
         $kela->update([
             'nama_kelas'    => $request->nama_kelas,
-            'jurusan'       => $request->jurusan,
             'wali_id' => $request->wali_kelas_id,
         ]);
 

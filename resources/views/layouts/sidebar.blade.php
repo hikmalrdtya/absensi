@@ -50,7 +50,7 @@
         <nav class="flex-1 px-4 py-6">
             <ul class="space-y-3">
                 @if (auth()->user()->role === 'admin')
-                    {{-- Admin --}}
+                    {{-- ================= ADMIN ================= --}}
                     <li>
                         <a href="{{ route('admin.dashboard') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-md {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
@@ -111,7 +111,8 @@
                         </a>
                     </li>
                 @elseif (auth()->user()->role === 'petugas')
-                    {{-- Petugas --}}
+                    {{-- ================= PETUGAS ================= --}}
+
                     <li>
                         <a href="{{ route('petugas.dashboard') }}"
                             class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/80 {{ request()->routeIs('petugas.dashboard') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">

@@ -9,7 +9,7 @@
             <form action="{{ route('admin.kela.update', $kela) }}" method="POST">
                 @csrf
                 @method('PUT')
-
+                
                 <!-- NAMA KELAS -->
                 <div class="mb-4">
                     <label class="block text-gray-600 mb-2">Nama Kelas</label>

@@ -37,7 +37,6 @@
                                 {{ $p->name }} {{ $isAssigned ? ' (sudah menjadi wali kelas)' : '' }}
                             </option>
                         @endforeach
-
                     </select>
 
                     @error('wali_kelas_id')
