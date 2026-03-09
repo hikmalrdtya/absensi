@@ -1,4 +1,11 @@
 import "./bootstrap";
+import TomSelect from "tom-select";
+import "tom-select/dist/css/tom-select.css";
+import Chart from "chart.js/auto";
+
+// expose globals for inline scripts that expect them
+window.TomSelect = TomSelect;
+window.Chart = Chart;
 
 // Sidebar toggle (default closed)
 document.addEventListener("DOMContentLoaded", function () {

@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <!-- Tom Select & Chart.js loaded via npm and bundled by Vite -->
     <link rel="shortcut icon" href="{{ asset('icon.png') }}" type="image/x-icon">
     @vite('resources/css/app.css')
     <title>Absensi Siswa</title>

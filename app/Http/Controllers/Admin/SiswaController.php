@@ -12,10 +12,20 @@ class SiswaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = Siswa::with('kelas')->paginate(10);
-        return view('admin.siswa.index', compact('siswa'));
+        $kelas = Kelas::all();
+
+        $query = Siswa::with('kelas');
+
+        if ($request->filled('kelas')) {
+            $query->where('kelas_id', $request->kelas);
+        }
+
+        $siswa = $query->paginate(10);
+        $siswa->appends($request->only('kelas'));
+
+        return view('admin.siswa.index', compact('siswa', 'kelas'));
     }
 
     /**

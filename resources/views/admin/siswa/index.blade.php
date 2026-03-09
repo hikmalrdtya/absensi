@@ -14,6 +14,25 @@
             </a>
         </div>
 
+        <!-- FILTER -->
+        <form method="GET" action="{{ route('admin.siswa.index') }}" class="mb-4 flex items-center gap-3">
+            <label for="kelas" class="text-sm text-gray-600">Filter Kelas:</label>
+            <select name="kelas" id="kelas" class="px-3 py-2 rounded-lg text-sm w-80">
+                <option value="" {{ request('kelas') == null ? 'selected' : '' }}>Semua Kelas</option>
+                @foreach ($kelas as $k)
+                    <option value="{{ $k->id }}"
+                        {{ (string) request('kelas') === (string) $k->id ? 'selected' : '' }}>
+                        {{ $k->nama_kelas }}</option>
+                @endforeach
+            </select>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Terapkan</button>
+
+            @if (request('kelas'))
+                <a href="{{ route('admin.siswa.index') }}" class="text-sm text-gray-600 underline">Reset</a>
+            @endif
+        </form>
+
         <!-- NOTIF -->
         @if (session('success'))
             <div class="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
@@ -94,3 +113,70 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <style>
+        /* Slightly larger option padding to match screenshot */
+        .ts-dropdown .option,
+        .tom-select-dropdown .option,
+        .ts-dropdown .ts-option {
+            padding: .75rem 1rem;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.querySelector('#kelas');
+            if (!select) return;
+
+            const optionCount = Array.from(select.options).filter(o => o.value !== '').length;
+
+            const ts = new TomSelect('#kelas', {
+                allowEmptyOption: true,
+                dropdownDirection: 'auto'
+            });
+
+            function applyDropdownStyle() {
+                let wrapper = select.nextElementSibling;
+                let dropdown = null;
+
+                if (wrapper) {
+                    dropdown = wrapper.querySelector(
+                        '.ts-dropdown, .tom-select-dropdown, .dropdown-content, .dropdown');
+                }
+
+                if (!dropdown) {
+                    dropdown = document.querySelector(
+                        '.ts-dropdown, .tom-select-dropdown, .dropdown-content, .dropdown');
+                }
+
+                if (dropdown) {
+                    if (optionCount > 6) {
+                        dropdown.style.maxHeight = '220px';
+                        dropdown.style.overflowY = 'auto';
+                    } else {
+                        dropdown.style.maxHeight = '';
+                        dropdown.style.overflowY = '';
+                    }
+                }
+            }
+
+            applyDropdownStyle();
+
+            const control = select.nextElementSibling;
+            if (control) {
+                control.addEventListener('click', function() {
+                    setTimeout(applyDropdownStyle, 30);
+                });
+            }
+
+            const observer = new MutationObserver(function() {
+                applyDropdownStyle();
+            });
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        });
+    </script>
+@endpush

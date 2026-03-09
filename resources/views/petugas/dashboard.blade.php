@@ -127,7 +127,7 @@
         </div>
 
         {{-- Chart.js CDN + render for petugas --}}
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Chart.js loaded via npm and bundled by Vite -->
         <script>
             (function() {
                 const ctx = document.getElementById('petugasStatusChart');
