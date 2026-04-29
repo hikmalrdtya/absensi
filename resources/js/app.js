@@ -2,10 +2,12 @@ import "./bootstrap";
 import TomSelect from "tom-select";
 import "tom-select/dist/css/tom-select.css";
 import Chart from "chart.js/auto";
+import Swal from "sweetalert2";
 
 // expose globals for inline scripts that expect them
 window.TomSelect = TomSelect;
 window.Chart = Chart;
+window.Swal = Swal;
 
 // Sidebar toggle (default closed)
 document.addEventListener("DOMContentLoaded", function () {
@@ -98,7 +100,14 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function (e) {
             var id = this.getAttribute("data-id");
             var token = getCsrfToken();
-            if (!token) return alert("CSRF token not found");
+            if (!token) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "CSRF token not found",
+                });
+                return;
+            }
 
             var formData = new FormData();
             formData.append("_token", token);
@@ -109,7 +118,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.reload();
                 })
                 .catch(function () {
-                    alert("Gagal mengirim SMS");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal",
+                        text: "Gagal mengirim SMS",
+                    });
                     btn.disabled = false;
                 });
         });
@@ -119,7 +132,14 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function (e) {
             var id = this.getAttribute("data-id");
             var token = getCsrfToken();
-            if (!token) return alert("CSRF token not found");
+            if (!token) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "CSRF token not found",
+                });
+                return;
+            }
 
             var formData = new FormData();
             formData.append("_token", token);
@@ -130,9 +150,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.reload();
                 })
                 .catch(function () {
-                    alert("Gagal mengirim WhatsApp");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Gagal",
+                        text: "Gagal mengirim WhatsApp",
+                    });
                     btn.disabled = false;
                 });
         });
     });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    var successEl = document.getElementById("server-success");
+    if (successEl && successEl.dataset && successEl.dataset.message) {
+        Swal.fire({
+            icon: "success",
+            title: "Sukses",
+            text: successEl.dataset.message,
+        });
+    }
+
+    var errorEl = document.getElementById("server-error");
+    if (errorEl && errorEl.dataset && errorEl.dataset.message) {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: errorEl.dataset.message,
+        });
+    }
 });

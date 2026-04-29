@@ -9,6 +9,8 @@ use App\Http\Controllers\Petugas\AbsensiController;
 use App\Http\Controllers\Admin\AbsensiController as AdminAbsensiController;
 use App\Services\SmsService;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Petugas\ReportController as PetugasReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,17 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'formLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+});
+
+// REPORTS (PDF)
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('laporan/absensi', [AdminReportController::class, 'index'])->name('laporan.absensi.index');
+    Route::get('laporan/absensi/pdf', [AdminReportController::class, 'pdf'])->name('laporan.absensi.pdf');
+});
+
+Route::middleware('auth')->prefix('petugas')->name('petugas.')->group(function () {
+    Route::get('laporan/absensi', [PetugasReportController::class, 'index'])->name('laporan.absensi.index');
+    Route::get('laporan/absensi/pdf', [PetugasReportController::class, 'pdf'])->name('laporan.absensi.pdf');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])

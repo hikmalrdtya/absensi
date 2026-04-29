@@ -119,11 +119,6 @@
     </div>
 
 
-    {{-- TOAST --}}
-    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-3"></div>
-
-
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -132,42 +127,7 @@
                 dropdownParent: "body"
             });
 
-            const ss = document.getElementById('server-success');
-            const se = document.getElementById('server-error');
-
-            function showToast(type, message, timeout = 3000) {
-
-                const container = document.getElementById('toast-container');
-
-                const toast = document.createElement('div');
-
-                toast.className =
-                    "px-4 py-3 rounded-lg shadow-lg text-white text-sm min-w-[250px] transition-all duration-300 opacity-0 translate-x-5";
-
-                let bg = "bg-blue-600";
-
-                if (type === "success") bg = "bg-green-600";
-                if (type === "error") bg = "bg-red-600";
-
-                toast.classList.add(bg);
-                toast.innerHTML = message;
-
-                container.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.remove("opacity-0", "translate-x-5");
-                    toast.classList.add("opacity-100", "translate-x-0");
-                }, 50);
-
-                setTimeout(() => {
-                    toast.classList.add("opacity-0", "translate-x-5");
-                    setTimeout(() => toast.remove(), 300);
-                }, timeout);
-            }
-
-            if (ss?.dataset?.message) showToast('success', ss.dataset.message, 4000);
-            if (se?.dataset?.message) showToast('error', se.dataset.message, 4000);
-
+            // server messages are handled globally by app.js via #server-success / #server-error
 
             // SELECT SISWA CHANGE
             const select = document.getElementById('siswaSelect');

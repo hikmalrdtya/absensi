@@ -74,32 +74,34 @@
             use App\Models\Absensi;
             use Illuminate\Support\Facades\DB;
 
-            $statusCounts = Absensi::whereHas('siswa.kelas', function ($q) use ($userId) {
-                $q->where('wali_id', $userId);
-            })
-                ->select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->get()
-                ->pluck('total', 'status')
-                ->toArray();
+            // per-hari (hari ini) status counts for this petugas's kelas
+$statusCounts = Absensi::whereDate('tanggal', $today)
+    ->whereHas('siswa.kelas', function ($q) use ($userId) {
+        $q->where('wali_id', $userId);
+    })
+    ->select('status', DB::raw('count(*) as total'))
+    ->groupBy('status')
+    ->get()
+    ->pluck('total', 'status')
+    ->toArray();
 
-            // Ensure keys exist
-            $statuses = ['Hadir', 'Sakit', 'Izin', 'Alpa'];
-            $statusCounts = array_merge(array_fill_keys($statuses, 0), $statusCounts);
+// Ensure keys exist
+$statuses = ['Hadir', 'Sakit', 'Izin', 'Alpa'];
+$statusCounts = array_merge(array_fill_keys($statuses, 0), $statusCounts);
 
-            $recent = Absensi::with('siswa')
-                ->whereHas('siswa.kelas', function ($q) use ($userId) {
-                    $q->where('wali_id', $userId);
-                })
-                ->orderBy('tanggal', 'desc')
+$recent = Absensi::with('siswa')
+    ->whereHas('siswa.kelas', function ($q) use ($userId) {
+        $q->where('wali_id', $userId);
+    })
+    ->orderBy('tanggal', 'desc')
                 ->limit(5)
                 ->get();
         @endphp
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             <div class="bg-white rounded-xl shadow p-6">
-                <h3 class="text-lg font-semibold mb-3">Rekap Status Absensi Saya</h3>
-                <p class="text-sm text-gray-500 mb-4">Semua data yang Anda catat</p>
+                <h3 class="text-lg font-semibold mb-3">Rekap Status Absensi Saya Hari Ini</h3>
+                <p class="text-sm text-gray-500 mb-4">{{ now()->translatedFormat('d F Y') }}</p>
                 <canvas id="petugasStatusChart" style="max-height:260px;"></canvas>
             </div>
 
@@ -111,7 +113,7 @@
                     @foreach ($recent as $a)
                         <div class="border rounded-lg p-4 flex items-center justify-between">
                             <div>
-                                <div class="font-semibold text-gray-800">{{ $a->siswa->nama ?? '-' }}</div>
+                                <div class="font-semibold text-gray-800">{{ ucfirst($a->siswa->nama ?? '-') }}</div>
                                 <div class="text-sm text-gray-500">{{ $a->siswa->kelas->nama_kelas ?? '-' }} ·
                                     {{ $a->tanggal }}</div>
                             </div>
@@ -129,34 +131,47 @@
         {{-- Chart.js CDN + render for petugas --}}
         <!-- Chart.js loaded via npm and bundled by Vite -->
         <script>
-            (function() {
-                const ctx = document.getElementById('petugasStatusChart');
-                if (!ctx) return;
+            (function waitForChart() {
+                function init() {
+                    const ctx = document.getElementById('petugasStatusChart');
+                    if (!ctx) return;
 
-                const labels = @json(array_keys($statusCounts));
-                const data = @json(array_values($statusCounts));
-                const colors = ['#2563EB', '#F59E0B', '#3B82F6', '#EF4444'];
+                    const labels = @json(array_keys($statusCounts));
+                    const data = @json(array_values($statusCounts));
+                    const colors = ['#2563EB', '#F59E0B', '#3B82F6', '#EF4444'];
 
-                new Chart(ctx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Jumlah',
-                            data: data,
-                            backgroundColor: colors
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
+                    new Chart(ctx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Jumlah',
+                                data: data,
+                                backgroundColor: colors
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
+
+                if (typeof Chart !== 'undefined') {
+                    init();
+                } else {
+                    const id = setInterval(function() {
+                        if (typeof Chart !== 'undefined') {
+                            clearInterval(id);
+                            init();
+                        }
+                    }, 50);
+                }
             })();
         </script>
     </div>

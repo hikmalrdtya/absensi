@@ -14,15 +14,11 @@
 
         {{-- NOTIFIKASI --}}
         @if (session('success'))
-            <div class="mb-4 rounded-lg bg-green-100 text-green-700 px-4 py-2 text-sm">
-                {{ session('success') }}
-            </div>
+            <div id="server-success" data-message="{{ session('success') }}" hidden></div>
         @endif
 
         @if (session('error'))
-            <div class="mb-4 rounded-lg bg-red-100 text-red-700 px-4 py-2 text-sm">
-                {{ session('error') }}
-            </div>
+            <div id="server-error" data-message="{{ session('error') }}" hidden></div>
         @endif
 
         <!-- TABLE -->

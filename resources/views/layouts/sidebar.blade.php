@@ -35,7 +35,6 @@
                     </svg>
                     <div>
                         <div class="font-semibold">Absensi Siswa</div>
-                        <div class="text-sm text-blue-200">{{ ucfirst(auth()->user()->role) }}</div>
                     </div>
                 </div>
                 <button id="sidebarCloseBtn" aria-label="Close sidebar" class="p-2 rounded-md hover:bg-blue-500/20">
@@ -110,6 +109,18 @@
                             <span>Data Absensi</span>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="{{ route('admin.laporan.absensi.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md {{ request()->routeIs('admin.laporan.absensi.*') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                width="24px" fill="#e3e3e3">
+                                <path
+                                    d="m480-320 160-160-56-56-64 62v-166h-80v166l-64-62-56 56 160 160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z" />
+                            </svg>
+                            <span>Laporan Absensi</span>
+                        </a>
+                    </li>
                 @elseif (auth()->user()->role === 'petugas')
                     {{-- ================= PETUGAS ================= --}}
 
@@ -134,6 +145,17 @@
                                     d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z" />
                             </svg>
                             <span>Input Absensi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('petugas.laporan.absensi.index') }}"
+                            class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-700/60 {{ request()->routeIs('petugas.laporan.absensi.*') ? 'bg-blue-700/80' : 'hover:bg-blue-700/60' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                                width="24px" fill="#e3e3e3">
+                                <path
+                                    d="m480-320 160-160-56-56-64 62v-166h-80v166l-64-62-56 56 160 160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z" />
+                            </svg>
+                            <span>Laporan Absensi</span>
                         </a>
                     </li>
                 @endif

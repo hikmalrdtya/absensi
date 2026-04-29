@@ -73,15 +73,15 @@
 
         <!-- Charts Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <div class="bg-white rounded-xl shadow p-6">
+            <div class="bg-white rounded-xl shadow p-6 overflow-x-auto">
                 <h3 class="text-lg font-semibold mb-3">Jumlah Siswa per Kelas</h3>
                 <p class="text-sm text-gray-500 mb-4">Distribusi siswa di setiap kelas</p>
-                <canvas id="kelasChart" style="max-height:260px;"></canvas>
+                <canvas id="kelasChart" style="max-height:260px; min-width:100%;"></canvas>
             </div>
 
             <div class="bg-white rounded-xl shadow p-6">
                 <h3 class="text-lg font-semibold mb-3">Status Absensi</h3>
-                <p class="text-sm text-gray-500 mb-4">Rekap seluruh data absensi</p>
+                <p class="text-sm text-gray-500 mb-4">Rekap harian {{ now()->translatedFormat('d F Y') }}</p>
                 <canvas id="statusChart" style="max-height:260px;"></canvas>
                 <div class="mt-4 text-sm text-gray-600 flex flex-wrap gap-4" id="statusLegend"></div>
             </div>
@@ -136,68 +136,89 @@
         <!-- Chart.js CDN + render -->
         <!-- Chart.js loaded via npm and bundled by Vite -->
         <script>
-            (function() {
-                const kelasLabels = @json($kelasLabels ?? []);
-                const kelasCounts = @json($kelasCounts ?? []);
-                const statusCounts = @json($statusCounts ?? []);
+            (function waitForChart() {
+                function init() {
+                    const kelasLabels = @json($kelasLabels ?? []);
+                    const kelasCounts = @json($kelasCounts ?? []);
+                    const statusCounts = @json($statusCounts ?? []);
 
-                const kelasCtx = document.getElementById('kelasChart');
-                if (kelasCtx) {
-                    new Chart(kelasCtx.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: kelasLabels,
-                            datasets: [{
-                                label: 'Jumlah Siswa',
-                                data: kelasCounts,
-                                backgroundColor: 'rgba(39, 78, 237, 0.8)'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false
+                    const kelasCtx = document.getElementById('kelasChart');
+                    if (kelasCtx) {
+                        // if more than 4 labels, increase canvas min-width so horizontal scrollbar appears
+                        if (kelasLabels.length > 4) {
+                            const perLabel = 150; // px per label
+                            const minW = Math.max(600, kelasLabels.length * perLabel);
+                            kelasCtx.style.minWidth = minW + 'px';
+                        } else {
+                            kelasCtx.style.minWidth = '100%';
                         }
-                    });
-                }
-
-                const statusCtx = document.getElementById('statusChart');
-                if (statusCtx) {
-                    const labels = Object.keys(statusCounts);
-                    const data = labels.map(k => statusCounts[k]);
-                    const colors = {
-                        'Hadir': '#10B981',
-                        'Sakit': '#F59E0B',
-                        'Izin': '#3B82F6',
-                        'Alpa': '#EF4444'
-                    };
-                    const bg = labels.map(l => colors[l] || '#9CA3AF');
-
-                    new Chart(statusCtx.getContext('2d'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                data: data,
-                                backgroundColor: bg
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            cutout: '70%'
-                        }
-                    });
-
-                    const legend = document.getElementById('statusLegend');
-                    if (legend) {
-                        labels.forEach((lab, i) => {
-                            const el = document.createElement('div');
-                            el.className = 'flex items-center gap-2';
-                            el.innerHTML =
-                                `<span class="w-3 h-3 rounded-full" style="background:${bg[i]}"></span><span>${lab}: ${data[i]}</span>`;
-                            legend.appendChild(el);
+                        new Chart(kelasCtx.getContext('2d'), {
+                            type: 'bar',
+                            data: {
+                                labels: kelasLabels,
+                                datasets: [{
+                                    label: 'Jumlah Siswa',
+                                    data: kelasCounts,
+                                    backgroundColor: 'rgba(39, 78, 237, 0.8)'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
                         });
                     }
+
+                    const statusCtx = document.getElementById('statusChart');
+                    if (statusCtx) {
+                        const labels = Object.keys(statusCounts);
+                        const data = labels.map(k => statusCounts[k]);
+                        const colors = {
+                            'Hadir': '#10B981',
+                            'Sakit': '#F59E0B',
+                            'Izin': '#3B82F6',
+                            'Alpa': '#EF4444'
+                        };
+                        const bg = labels.map(l => colors[l] || '#9CA3AF');
+
+                        new Chart(statusCtx.getContext('2d'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    data: data,
+                                    backgroundColor: bg
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '70%'
+                            }
+                        });
+
+                        const legend = document.getElementById('statusLegend');
+                        if (legend) {
+                            labels.forEach((lab, i) => {
+                                const el = document.createElement('div');
+                                el.className = 'flex items-center gap-2';
+                                el.innerHTML =
+                                    `<span class="w-3 h-3 rounded-full" style="background:${bg[i]}"></span><span>${lab}: ${data[i]}</span>`;
+                                legend.appendChild(el);
+                            });
+                        }
+                    }
+                }
+
+                if (typeof Chart !== 'undefined') {
+                    init();
+                } else {
+                    const id = setInterval(function() {
+                        if (typeof Chart !== 'undefined') {
+                            clearInterval(id);
+                            init();
+                        }
+                    }, 50);
                 }
             })();
         </script>

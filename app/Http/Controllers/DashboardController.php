@@ -26,7 +26,9 @@ class DashboardController extends Controller
             $kelasLabels = $kelasWithCount->pluck('nama_kelas')->toArray();
             $kelasCounts = $kelasWithCount->pluck('siswa_count')->toArray();
 
-            $statusCounts = Absensi::select('status', DB::raw('count(*) as total'))
+            // status counts for today (per-hari)
+            $statusCounts = Absensi::whereDate('tanggal', now()->toDateString())
+                ->select('status', DB::raw('count(*) as total'))
                 ->groupBy('status')
                 ->get()
                 ->pluck('total', 'status')
